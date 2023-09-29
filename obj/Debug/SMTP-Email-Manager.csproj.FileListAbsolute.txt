@@ -1,0 +1,17 @@
+D:\GitHubDesktop\SMTP-Email-Manager\bin\Debug\SMTP-Email-Manager.exe.config
+D:\GitHubDesktop\SMTP-Email-Manager\bin\Debug\SMTP-Email-Manager.exe
+D:\GitHubDesktop\SMTP-Email-Manager\bin\Debug\SMTP-Email-Manager.pdb
+D:\GitHubDesktop\SMTP-Email-Manager\obj\Debug\SMTP-Email-Manager.csproj.AssemblyReference.cache
+D:\GitHubDesktop\SMTP-Email-Manager\obj\Debug\SMTP-Email-Manager.csproj.SuggestedBindingRedirects.cache
+D:\GitHubDesktop\SMTP-Email-Manager\obj\Debug\SMTP_Email_Manager.Form1.resources
+D:\GitHubDesktop\SMTP-Email-Manager\obj\Debug\SMTP_Email_Manager.Properties.Resources.resources
+D:\GitHubDesktop\SMTP-Email-Manager\obj\Debug\SMTP-Email-Manager.csproj.GenerateResource.cache
+D:\GitHubDesktop\SMTP-Email-Manager\obj\Debug\SMTP-Email-Manager.csproj.CoreCompileInputs.cache
+D:\GitHubDesktop\SMTP-Email-Manager\obj\Debug\SMTP-Email-Manager.exe
+D:\GitHubDesktop\SMTP-Email-Manager\obj\Debug\SMTP-Email-Manager.pdb
+D:\GitHubDesktop\SMTP-Email-Manager\bin\Debug\EntityFramework.dll
+D:\GitHubDesktop\SMTP-Email-Manager\bin\Debug\EntityFramework.SqlServer.dll
+D:\GitHubDesktop\SMTP-Email-Manager\bin\Debug\EntityFramework.xml
+D:\GitHubDesktop\SMTP-Email-Manager\bin\Debug\EntityFramework.SqlServer.xml
+D:\GitHubDesktop\SMTP-Email-Manager\obj\Debug\SMTP-Email-Manager.csproj.CopyComplete
+D:\GitHubDesktop\SMTP-Email-Manager\obj\Debug\SMTP_Email_Manager.Migrations.FirstMigration.resources
