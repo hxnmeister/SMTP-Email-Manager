@@ -40,16 +40,18 @@
             this.MessageTextBox = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.ContactsComboBox = new System.Windows.Forms.ComboBox();
-            this.label8 = new System.Windows.Forms.Label();
             this.RecipientsListBox = new System.Windows.Forms.ListBox();
             this.label9 = new System.Windows.Forms.Label();
             this.FilesListBox = new System.Windows.Forms.ListBox();
             this.AttachedListBox = new System.Windows.Forms.ListBox();
-            this.SelectButton = new System.Windows.Forms.Button();
-            this.AddButton = new System.Windows.Forms.Button();
+            this.SelectFileButton = new System.Windows.Forms.Button();
+            this.AddFileButton = new System.Windows.Forms.Button();
             this.ClearButton = new System.Windows.Forms.Button();
             this.SendButton = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.SelectContactButton = new System.Windows.Forms.Button();
+            this.AddContactButton = new System.Windows.Forms.Button();
+            this.label10 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -161,24 +163,14 @@
             this.ContactsComboBox.TabIndex = 11;
             this.ContactsComboBox.SelectedIndexChanged += new System.EventHandler(this.ContactsComboBox_SelectedIndexChanged);
             // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label8.Location = new System.Drawing.Point(411, 204);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(89, 18);
-            this.label8.TabIndex = 12;
-            this.label8.Text = "Recipients:";
-            // 
             // RecipientsListBox
             // 
             this.RecipientsListBox.FormattingEnabled = true;
             this.RecipientsListBox.ItemHeight = 18;
-            this.RecipientsListBox.Location = new System.Drawing.Point(414, 225);
+            this.RecipientsListBox.Location = new System.Drawing.Point(414, 297);
             this.RecipientsListBox.Name = "RecipientsListBox";
             this.RecipientsListBox.ScrollAlwaysVisible = true;
-            this.RecipientsListBox.Size = new System.Drawing.Size(376, 418);
+            this.RecipientsListBox.Size = new System.Drawing.Size(376, 346);
             this.RecipientsListBox.TabIndex = 13;
             // 
             // label9
@@ -198,7 +190,7 @@
             this.FilesListBox.Location = new System.Drawing.Point(808, 33);
             this.FilesListBox.Name = "FilesListBox";
             this.FilesListBox.ScrollAlwaysVisible = true;
-            this.FilesListBox.Size = new System.Drawing.Size(377, 220);
+            this.FilesListBox.Size = new System.Drawing.Size(377, 256);
             this.FilesListBox.TabIndex = 15;
             // 
             // AttachedListBox
@@ -211,41 +203,42 @@
             this.AttachedListBox.Size = new System.Drawing.Size(377, 292);
             this.AttachedListBox.TabIndex = 16;
             // 
-            // SelectButton
+            // SelectFileButton
             // 
-            this.SelectButton.Location = new System.Drawing.Point(808, 274);
-            this.SelectButton.Name = "SelectButton";
-            this.SelectButton.Size = new System.Drawing.Size(100, 46);
-            this.SelectButton.TabIndex = 17;
-            this.SelectButton.Text = "Select";
-            this.SelectButton.UseVisualStyleBackColor = true;
+            this.SelectFileButton.Location = new System.Drawing.Point(808, 295);
+            this.SelectFileButton.Name = "SelectFileButton";
+            this.SelectFileButton.Size = new System.Drawing.Size(189, 46);
+            this.SelectFileButton.TabIndex = 17;
+            this.SelectFileButton.Text = "Select File";
+            this.SelectFileButton.UseVisualStyleBackColor = true;
+            this.SelectFileButton.Click += new System.EventHandler(this.SelectFileButton_Click);
             // 
-            // AddButton
+            // AddFileButton
             // 
-            this.AddButton.Location = new System.Drawing.Point(1085, 274);
-            this.AddButton.Name = "AddButton";
-            this.AddButton.Size = new System.Drawing.Size(100, 46);
-            this.AddButton.TabIndex = 18;
-            this.AddButton.Text = "Add File";
-            this.AddButton.UseVisualStyleBackColor = true;
+            this.AddFileButton.Location = new System.Drawing.Point(1003, 295);
+            this.AddFileButton.Name = "AddFileButton";
+            this.AddFileButton.Size = new System.Drawing.Size(184, 46);
+            this.AddFileButton.TabIndex = 18;
+            this.AddFileButton.Text = "Add File";
+            this.AddFileButton.UseVisualStyleBackColor = true;
+            this.AddFileButton.Click += new System.EventHandler(this.AddFileButton_Click);
             // 
             // ClearButton
             // 
-            this.ClearButton.Enabled = false;
             this.ClearButton.Location = new System.Drawing.Point(15, 597);
             this.ClearButton.Name = "ClearButton";
-            this.ClearButton.Size = new System.Drawing.Size(100, 46);
+            this.ClearButton.Size = new System.Drawing.Size(189, 46);
             this.ClearButton.TabIndex = 20;
-            this.ClearButton.Text = "Clear Message";
+            this.ClearButton.Text = "Clear";
             this.ClearButton.UseVisualStyleBackColor = true;
             this.ClearButton.Click += new System.EventHandler(this.ClearButton_Click);
             // 
             // SendButton
             // 
             this.SendButton.Enabled = false;
-            this.SendButton.Location = new System.Drawing.Point(292, 597);
+            this.SendButton.Location = new System.Drawing.Point(210, 597);
             this.SendButton.Name = "SendButton";
-            this.SendButton.Size = new System.Drawing.Size(100, 46);
+            this.SendButton.Size = new System.Drawing.Size(182, 46);
             this.SendButton.TabIndex = 19;
             this.SendButton.Text = "Send  Email";
             this.SendButton.UseVisualStyleBackColor = true;
@@ -261,20 +254,51 @@
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
+            // SelectContactButton
+            // 
+            this.SelectContactButton.Location = new System.Drawing.Point(414, 197);
+            this.SelectContactButton.Name = "SelectContactButton";
+            this.SelectContactButton.Size = new System.Drawing.Size(189, 46);
+            this.SelectContactButton.TabIndex = 21;
+            this.SelectContactButton.Text = "Select Contact";
+            this.SelectContactButton.UseVisualStyleBackColor = true;
+            // 
+            // AddContactButton
+            // 
+            this.AddContactButton.Location = new System.Drawing.Point(609, 197);
+            this.AddContactButton.Name = "AddContactButton";
+            this.AddContactButton.Size = new System.Drawing.Size(182, 46);
+            this.AddContactButton.TabIndex = 22;
+            this.AddContactButton.Text = "Add Contact";
+            this.AddContactButton.UseVisualStyleBackColor = true;
+            this.AddContactButton.Click += new System.EventHandler(this.AddContactButton_Click);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.label10.Location = new System.Drawing.Point(413, 271);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(89, 18);
+            this.label10.TabIndex = 23;
+            this.label10.Text = "Recipients:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1199, 668);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.AddContactButton);
+            this.Controls.Add(this.SelectContactButton);
             this.Controls.Add(this.ClearButton);
             this.Controls.Add(this.SendButton);
-            this.Controls.Add(this.AddButton);
-            this.Controls.Add(this.SelectButton);
+            this.Controls.Add(this.AddFileButton);
+            this.Controls.Add(this.SelectFileButton);
             this.Controls.Add(this.AttachedListBox);
             this.Controls.Add(this.FilesListBox);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.RecipientsListBox);
-            this.Controls.Add(this.label8);
             this.Controls.Add(this.ContactsComboBox);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.MessageTextBox);
@@ -321,10 +345,13 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ListBox FilesListBox;
         private System.Windows.Forms.ListBox AttachedListBox;
-        private System.Windows.Forms.Button SelectButton;
-        private System.Windows.Forms.Button AddButton;
+        private System.Windows.Forms.Button SelectFileButton;
+        private System.Windows.Forms.Button AddFileButton;
         private System.Windows.Forms.Button ClearButton;
         private System.Windows.Forms.Button SendButton;
+        private System.Windows.Forms.Button SelectContactButton;
+        private System.Windows.Forms.Button AddContactButton;
+        private System.Windows.Forms.Label label10;
     }
 }
 

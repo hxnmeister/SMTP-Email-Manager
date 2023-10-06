@@ -57,6 +57,9 @@ namespace SMTP_Email_Manager
         private void Form1_Load(object sender, EventArgs e)
         {
             FillContactsList();
+
+            AttachedListBox.DisplayMember = "FileName";
+            FilesListBox.DisplayMember = "FileName";
         }
 
         private void ContactsComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -66,7 +69,6 @@ namespace SMTP_Email_Manager
 
         private void MessageTextBox_TextChanged(object sender, EventArgs e)
         {
-            ClearButton.Enabled = !string.IsNullOrWhiteSpace(MessageTextBox.Text);
             SendButtonEnableSwitcher();
         }
 
@@ -82,7 +84,11 @@ namespace SMTP_Email_Manager
 
         private void ClearButton_Click(object sender, EventArgs e)
         {
+            SubjectTextBox.Clear();
             MessageTextBox.Clear();
+            RecipientsListBox.Items.Clear();
+            FilesListBox.Items.Clear();
+            AttachedListBox.Items.Clear();
         }
 
         private void SendButton_Click(object sender, EventArgs e)
@@ -96,13 +102,61 @@ namespace SMTP_Email_Manager
             new SmtpClient("sandbox.smtp.mailtrap.io", 587)
             {
                 Credentials = new NetworkCredential("25175f21d8e6ea", "3bc5077ec4f091"),
-                EnableSsl = true
             }.Send(message);
-
             SubjectTextBox.Clear();
             MessageTextBox.Clear();
 
             MessageBox.Show($"Message successfully sended to {ToTextBox.Text}", "Success!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void AddContactButton_Click(object sender, EventArgs e)
+        {
+            if(ContactsComboBox.SelectedIndex > -1)
+            {
+                string contact = ContactsComboBox.SelectedItem.ToString();
+                if (!RecipientsListBox.Items.Contains(contact))
+                {
+                    RecipientsListBox.Items.Add(contact);
+                }
+                else
+                {
+                    MessageBox.Show("Contact already added to recipients list!", "Duplicate!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+        }
+
+        private void SelectFileButton_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog fileDialog = new OpenFileDialog())
+            {
+                if(fileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    SendFile sendFile = new SendFile()
+                    {
+                        FileName = fileDialog.SafeFileName,
+                        FilePath = fileDialog.FileName
+                    };
+
+                    FilesListBox.Items.Add(sendFile);
+                }
+            }
+        }
+
+        private void AddFileButton_Click(object sender, EventArgs e)
+        {
+            if(FilesListBox.SelectedIndex > -1)
+            {
+                SendFile sendFile = FilesListBox.SelectedItem as SendFile;
+
+                if(sendFile != null && !AttachedListBox.Items.Contains(sendFile))
+                {
+                    AttachedListBox.Items.Add(sendFile);
+                }
+                else
+                {
+                    MessageBox.Show("File already added to attachments list!", "Duplicate!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
         }
     }
 }
