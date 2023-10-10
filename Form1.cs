@@ -122,8 +122,8 @@ namespace SMTP_Email_Manager
                 smtpClient.Credentials = new NetworkCredential("0ae306c1e8fc46", "9e91ebe4298d46");
                 smtpClient.Send(message);
 
-                ClearAllData();
                 MessageBox.Show($"Message successfully sended to {ToTextBox.Text}", "Success!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ClearAllData();
             }
             catch (Exception ex)
             {
