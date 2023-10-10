@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SMTP_Email_Manager.Models;
@@ -16,6 +17,8 @@ namespace SMTP_Email_Manager
     public partial class Form1 : Form
     {
         private Model1 db = new Model1();
+        private MailMessage message;
+        private readonly Regex mailReg = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
 
         public Form1()
         {
@@ -33,30 +36,43 @@ namespace SMTP_Email_Manager
             db.SaveChanges();
             MessageBox.Show("InitData - OK");
         }
+        private void ClearAllData()
+        {
+            message.To.Clear();
+            message.CC.Clear();
+            message.Attachments.Clear();
+
+            ToTextBox.Clear();
+            SubjectTextBox.Clear();
+            MessageTextBox.Clear();
+            FilesListBox.Items.Clear();
+            AttachedListBox.Items.Clear();
+            RecipientsListBox.Items.Clear();
+            ContactsComboBox.Text = ContactsComboBox.Items.Count > 0 ? "Choose contact" : "No contacts";
+        }
         private void FillContactsList()
         {
-            var currentContacts = db.Contacts.ToList();
+            List<Contact> currentContacts = db.Contacts.ToList();
 
             ContactsComboBox.Items.Clear();
            
-            foreach ( Contact contact in currentContacts )
+            foreach (Contact contact in currentContacts)
             {
                 ContactsComboBox.Items.Add(contact.Email);
             }
 
-            if(ContactsComboBox.Items.Count > 0)
-            {
-                ContactsComboBox.SelectedIndex = 0;
-            }
+            ContactsComboBox.Text = ContactsComboBox.Items.Count > 0 ? "Choose contact" : "No contacts";
         }
         private void SendButtonEnableSwitcher()
         {
-            SendButton.Enabled = !string.IsNullOrWhiteSpace(MessageTextBox.Text) && !string.IsNullOrWhiteSpace(SubjectTextBox.Text) && !string.IsNullOrWhiteSpace(ToTextBox.Text);
+            SendButton.Enabled = !string.IsNullOrWhiteSpace(MessageTextBox.Text) && !string.IsNullOrWhiteSpace(SubjectTextBox.Text) && mailReg.IsMatch(ToTextBox.Text);
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             FillContactsList();
+
+            message = new MailMessage();
 
             AttachedListBox.DisplayMember = "FileName";
             FilesListBox.DisplayMember = "FileName";
@@ -84,27 +100,29 @@ namespace SMTP_Email_Manager
 
         private void ClearButton_Click(object sender, EventArgs e)
         {
-            SubjectTextBox.Clear();
-            MessageTextBox.Clear();
-            RecipientsListBox.Items.Clear();
-            FilesListBox.Items.Clear();
-            AttachedListBox.Items.Clear();
+            if(MessageBox.Show("After confirmation, all information will be cleared.\nAre you sure you want to continue?", "Confirmation of deleting", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+            {
+                ClearAllData();
+            }
+            else
+            {
+                MessageBox.Show("Deletion cancelled!", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private void SendButton_Click(object sender, EventArgs e)
         {
-            MailMessage message = new MailMessage(new MailAddress("SMTP_Email_Manager@testmail.com"), new MailAddress(ToTextBox.Text))
-            {
-                Subject = SubjectTextBox.Text,
-                Body = MessageTextBox.Text
-            };
+            message.From = new MailAddress("SMTP_Email_Manager@testmail.com");
+            message.To.Add(new MailAddress(ToTextBox.Text));
+            message.Body = MessageTextBox.Text;
+            message.Subject = SubjectTextBox.Text;
 
             new SmtpClient("sandbox.smtp.mailtrap.io", 587)
             {
-                Credentials = new NetworkCredential("25175f21d8e6ea", "3bc5077ec4f091"),
+                Credentials = new NetworkCredential("0ae306c1e8fc46", "9e91ebe4298d46"),
             }.Send(message);
-            SubjectTextBox.Clear();
-            MessageTextBox.Clear();
+
+            ClearAllData();
 
             MessageBox.Show($"Message successfully sended to {ToTextBox.Text}", "Success!", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
@@ -114,14 +132,21 @@ namespace SMTP_Email_Manager
             if(ContactsComboBox.SelectedIndex > -1)
             {
                 string contact = ContactsComboBox.SelectedItem.ToString();
+
                 if (!RecipientsListBox.Items.Contains(contact))
                 {
                     RecipientsListBox.Items.Add(contact);
+
+                    message.CC.Add(contact);
                 }
                 else
                 {
                     MessageBox.Show("Contact already added to recipients list!", "Duplicate!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
+            }
+            else
+            {
+                MessageBox.Show("To add a recipient you need to choose it first!", "No recipients selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -129,15 +154,18 @@ namespace SMTP_Email_Manager
         {
             using (OpenFileDialog fileDialog = new OpenFileDialog())
             {
+                fileDialog.Multiselect = true;
+
                 if(fileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    SendFile sendFile = new SendFile()
+                    for (int i = 0; i < fileDialog.FileNames.Length; i++)
                     {
-                        FileName = fileDialog.SafeFileName,
-                        FilePath = fileDialog.FileName
-                    };
-
-                    FilesListBox.Items.Add(sendFile);
+                        FilesListBox.Items.Add(new SendFile() 
+                        { 
+                            FileName = fileDialog.SafeFileNames[i], 
+                            FilePath = fileDialog.FileNames[i] 
+                        });
+                    }
                 }
             }
         }
@@ -146,16 +174,20 @@ namespace SMTP_Email_Manager
         {
             if(FilesListBox.SelectedIndex > -1)
             {
-                SendFile sendFile = FilesListBox.SelectedItem as SendFile;
-
-                if(sendFile != null && !AttachedListBox.Items.Contains(sendFile))
+                if (FilesListBox.SelectedItem is SendFile sendFile && !AttachedListBox.Items.Contains(sendFile))
                 {
                     AttachedListBox.Items.Add(sendFile);
+
+                    message.Attachments.Add(new Attachment(sendFile.FilePath));
                 }
                 else
                 {
                     MessageBox.Show("File already added to attachments list!", "Duplicate!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
+            }
+            else
+            {
+                MessageBox.Show("To attach a file to an email, first select it!", "No file selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
     }
