@@ -15,3 +15,4 @@ D:\GitHubDesktop\SMTP-Email-Manager\bin\Debug\EntityFramework.xml
 D:\GitHubDesktop\SMTP-Email-Manager\bin\Debug\EntityFramework.SqlServer.xml
 D:\GitHubDesktop\SMTP-Email-Manager\obj\Debug\SMTP-Email-Manager.csproj.CopyComplete
 D:\GitHubDesktop\SMTP-Email-Manager\obj\Debug\SMTP_Email_Manager.Migrations.FirstMigration.resources
+D:\GitHubDesktop\SMTP-Email-Manager\obj\Debug\SMTP_Email_Manager.Form2.resources

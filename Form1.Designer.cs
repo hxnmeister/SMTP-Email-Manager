@@ -48,10 +48,10 @@
             this.AddFileButton = new System.Windows.Forms.Button();
             this.ClearButton = new System.Windows.Forms.Button();
             this.SendButton = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.SelectContactButton = new System.Windows.Forms.Button();
             this.AddContactButton = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -170,6 +170,7 @@
             this.RecipientsListBox.Location = new System.Drawing.Point(414, 297);
             this.RecipientsListBox.Name = "RecipientsListBox";
             this.RecipientsListBox.ScrollAlwaysVisible = true;
+            this.RecipientsListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.RecipientsListBox.Size = new System.Drawing.Size(376, 346);
             this.RecipientsListBox.TabIndex = 13;
             // 
@@ -190,6 +191,7 @@
             this.FilesListBox.Location = new System.Drawing.Point(808, 33);
             this.FilesListBox.Name = "FilesListBox";
             this.FilesListBox.ScrollAlwaysVisible = true;
+            this.FilesListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.FilesListBox.Size = new System.Drawing.Size(377, 256);
             this.FilesListBox.TabIndex = 15;
             // 
@@ -200,11 +202,13 @@
             this.AttachedListBox.Location = new System.Drawing.Point(808, 351);
             this.AttachedListBox.Name = "AttachedListBox";
             this.AttachedListBox.ScrollAlwaysVisible = true;
+            this.AttachedListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.AttachedListBox.Size = new System.Drawing.Size(377, 292);
             this.AttachedListBox.TabIndex = 16;
             // 
             // SelectFileButton
             // 
+            this.SelectFileButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.SelectFileButton.Location = new System.Drawing.Point(808, 295);
             this.SelectFileButton.Name = "SelectFileButton";
             this.SelectFileButton.Size = new System.Drawing.Size(189, 46);
@@ -215,6 +219,7 @@
             // 
             // AddFileButton
             // 
+            this.AddFileButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.AddFileButton.Location = new System.Drawing.Point(1003, 295);
             this.AddFileButton.Name = "AddFileButton";
             this.AddFileButton.Size = new System.Drawing.Size(184, 46);
@@ -225,51 +230,47 @@
             // 
             // ClearButton
             // 
+            this.ClearButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.ClearButton.Location = new System.Drawing.Point(15, 597);
             this.ClearButton.Name = "ClearButton";
             this.ClearButton.Size = new System.Drawing.Size(189, 46);
             this.ClearButton.TabIndex = 20;
-            this.ClearButton.Text = "Clear";
+            this.ClearButton.Text = "Clear All";
             this.ClearButton.UseVisualStyleBackColor = true;
             this.ClearButton.Click += new System.EventHandler(this.ClearButton_Click);
             // 
             // SendButton
             // 
+            this.SendButton.BackColor = System.Drawing.SystemColors.Window;
+            this.SendButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.SendButton.Enabled = false;
             this.SendButton.Location = new System.Drawing.Point(210, 597);
             this.SendButton.Name = "SendButton";
             this.SendButton.Size = new System.Drawing.Size(182, 46);
             this.SendButton.TabIndex = 19;
             this.SendButton.Text = "Send  Email";
-            this.SendButton.UseVisualStyleBackColor = true;
+            this.SendButton.UseVisualStyleBackColor = false;
             this.SendButton.Click += new System.EventHandler(this.SendButton_Click);
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = global::SMTP_Email_Manager.Properties.Resources.logo;
-            this.pictureBox1.Location = new System.Drawing.Point(428, 12);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(108, 96);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
             // 
             // SelectContactButton
             // 
+            this.SelectContactButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.SelectContactButton.Location = new System.Drawing.Point(414, 197);
             this.SelectContactButton.Name = "SelectContactButton";
             this.SelectContactButton.Size = new System.Drawing.Size(189, 46);
             this.SelectContactButton.TabIndex = 21;
-            this.SelectContactButton.Text = "Select Contact";
+            this.SelectContactButton.Text = "Add Contact";
             this.SelectContactButton.UseVisualStyleBackColor = true;
+            this.SelectContactButton.Click += new System.EventHandler(this.SelectContactButton_Click);
             // 
             // AddContactButton
             // 
+            this.AddContactButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.AddContactButton.Location = new System.Drawing.Point(609, 197);
             this.AddContactButton.Name = "AddContactButton";
             this.AddContactButton.Size = new System.Drawing.Size(182, 46);
             this.AddContactButton.TabIndex = 22;
-            this.AddContactButton.Text = "Add Contact";
+            this.AddContactButton.Text = "Add Recipient";
             this.AddContactButton.UseVisualStyleBackColor = true;
             this.AddContactButton.Click += new System.EventHandler(this.AddContactButton_Click);
             // 
@@ -282,6 +283,16 @@
             this.label10.Size = new System.Drawing.Size(89, 18);
             this.label10.TabIndex = 23;
             this.label10.Text = "Recipients:";
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::SMTP_Email_Manager.Properties.Resources.logo;
+            this.pictureBox1.Location = new System.Drawing.Point(428, 12);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(108, 96);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
             // 
             // Form1
             // 
@@ -311,6 +322,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pictureBox1);
+            this.Cursor = System.Windows.Forms.Cursors.Hand;
             this.Font = new System.Drawing.Font("Verdana", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -319,6 +331,7 @@
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Email Manager";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);

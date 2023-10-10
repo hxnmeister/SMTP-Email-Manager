@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -18,6 +19,7 @@ namespace SMTP_Email_Manager
     {
         private Model1 db = new Model1();
         private MailMessage message;
+        //mailReg - це реулярний вираз який дозволить перевірити правильність вводу електронної пошти
         private readonly Regex mailReg = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
 
         public Form1()
@@ -25,17 +27,6 @@ namespace SMTP_Email_Manager
             InitializeComponent();
         }
 
-        private void InitData()
-        {
-            db.Contacts.Add(new Contact() { Email = "justi@ukr.net"} );
-            db.Contacts.Add(new Contact() { Email = "const@ukr.net"} );
-            db.Contacts.Add(new Contact() { Email = "konfi@ukr.net"} );
-            db.Contacts.Add(new Contact() { Email = "zeno@ukr.net"} );
-            db.Contacts.Add(new Contact() { Email = "casda@ukr.net"} );
-
-            db.SaveChanges();
-            MessageBox.Show("InitData - OK");
-        }
         private void ClearAllData()
         {
             message.To.Clear();
@@ -63,6 +54,7 @@ namespace SMTP_Email_Manager
 
             ContactsComboBox.Text = ContactsComboBox.Items.Count > 0 ? "Choose contact" : "No contacts";
         }
+        //Метод дозволяє регулювати доступність кнопки відправки листа. Вона буде доступна тільки при заповненні всіх полів та правильно вказаній адресі отримувача
         private void SendButtonEnableSwitcher()
         {
             SendButton.Enabled = !string.IsNullOrWhiteSpace(MessageTextBox.Text) && !string.IsNullOrWhiteSpace(SubjectTextBox.Text) && mailReg.IsMatch(ToTextBox.Text);
@@ -80,7 +72,14 @@ namespace SMTP_Email_Manager
 
         private void ContactsComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ToTextBox.Text = ContactsComboBox.SelectedItem.ToString() ?? string.Empty;
+            //Підтвердження для того щоб користувач випадково не замінив електронну адресу
+            if (!string.IsNullOrWhiteSpace(ToTextBox.Text) && MessageBox.Show("After confirmation, the previously specified address will be replaced with the selected one, are you sure?", "Confirmation window", 
+                MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            ToTextBox.Text = ContactsComboBox.SelectedItem.ToString();
         }
 
         private void MessageTextBox_TextChanged(object sender, EventArgs e)
@@ -112,83 +111,133 @@ namespace SMTP_Email_Manager
 
         private void SendButton_Click(object sender, EventArgs e)
         {
-            message.From = new MailAddress("SMTP_Email_Manager@testmail.com");
-            message.To.Add(new MailAddress(ToTextBox.Text));
-            message.Body = MessageTextBox.Text;
-            message.Subject = SubjectTextBox.Text;
-
-            new SmtpClient("sandbox.smtp.mailtrap.io", 587)
+            try
             {
-                Credentials = new NetworkCredential("0ae306c1e8fc46", "9e91ebe4298d46"),
-            }.Send(message);
+                message.From = new MailAddress("SMTP_Email_Manager@testmail.com");
+                message.To.Add(new MailAddress(ToTextBox.Text));
+                message.Body = MessageTextBox.Text;
+                message.Subject = SubjectTextBox.Text;
 
-            ClearAllData();
+                SmtpClient smtpClient = new SmtpClient("sandbox.smtp.mailtrap.io", 587);
+                smtpClient.Credentials = new NetworkCredential("0ae306c1e8fc46", "9e91ebe4298d46");
+                smtpClient.Send(message);
 
-            MessageBox.Show($"Message successfully sended to {ToTextBox.Text}", "Success!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ClearAllData();
+                MessageBox.Show($"Message successfully sended to {ToTextBox.Text}", "Success!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Exceprion during sending email: \n{ex.Message}", "Exception!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void AddContactButton_Click(object sender, EventArgs e)
         {
-            if(ContactsComboBox.SelectedIndex > -1)
+            try
             {
-                string contact = ContactsComboBox.SelectedItem.ToString();
-
-                if (!RecipientsListBox.Items.Contains(contact))
+                if (ContactsComboBox.SelectedIndex > -1)
                 {
-                    RecipientsListBox.Items.Add(contact);
+                    string contact = ContactsComboBox.SelectedItem.ToString();
 
-                    message.CC.Add(contact);
+                    if (!RecipientsListBox.Items.Contains(contact))
+                    {
+                        RecipientsListBox.Items.Add(contact);
+                        message.CC.Add(contact);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Contact already added to recipients list!", "Duplicate!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("Contact already added to recipients list!", "Duplicate!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("To add a recipient you need to choose it first!", "No recipients selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("To add a recipient you need to choose it first!", "No recipients selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"Exception during adding recipients: \n{ex.Message}", "Exception!", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void SelectFileButton_Click(object sender, EventArgs e)
         {
-            using (OpenFileDialog fileDialog = new OpenFileDialog())
+            try
             {
-                fileDialog.Multiselect = true;
-
-                if(fileDialog.ShowDialog() == DialogResult.OK)
+                using (OpenFileDialog fileDialog = new OpenFileDialog())
                 {
-                    for (int i = 0; i < fileDialog.FileNames.Length; i++)
+                    fileDialog.Multiselect = true;
+
+                    if (fileDialog.ShowDialog() == DialogResult.OK)
                     {
-                        FilesListBox.Items.Add(new SendFile() 
-                        { 
-                            FileName = fileDialog.SafeFileNames[i], 
-                            FilePath = fileDialog.FileNames[i] 
-                        });
+                        for (int i = 0; i < fileDialog.FileNames.Length; i++)
+                        {
+                            FilesListBox.Items.Add(new SendFile()
+                            {
+                                FileName = fileDialog.SafeFileNames[i],
+                                FilePath = fileDialog.FileNames[i]
+                            });
+                        }
                     }
                 }
+            }
+            catch(FileLoadException fex)
+            {
+                MessageBox.Show($"File load exception: \n{fex.Message}", "Exception!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (FileNotFoundException)
+            {
+                MessageBox.Show($"File no found!", "Exception!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Exception during file operations: \n{ex.Message}", "Exception!", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void AddFileButton_Click(object sender, EventArgs e)
         {
-            if(FilesListBox.SelectedIndex > -1)
+            try
             {
-                if (FilesListBox.SelectedItem is SendFile sendFile && !AttachedListBox.Items.Contains(sendFile))
+                if (FilesListBox.SelectedIndex > -1)
                 {
-                    AttachedListBox.Items.Add(sendFile);
+                    var selectedFiles = FilesListBox.SelectedItems.OfType<SendFile>();
 
-                    message.Attachments.Add(new Attachment(sendFile.FilePath));
+                    if (selectedFiles.Any())
+                    {
+                        foreach (SendFile file in selectedFiles)
+                        {
+                            if (!AttachedListBox.Items.Contains(file))
+                            {
+                                AttachedListBox.Items.Add(file);
+                                message.Attachments.Add(new Attachment(file.FilePath));
+                            }
+                            else
+                            {
+                                MessageBox.Show($"File {file.FileName} already added to attachments list!", "Duplicate!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }
+                        }
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("File already added to attachments list!", "Duplicate!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("To attach a file to an email, first select it!", "No file selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("To attach a file to an email, first select it!", "No file selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"Exception during adding attachments: \n{ex.Message}", "Exception!", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void SelectContactButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            db.SaveChanges();
         }
     }
 }
